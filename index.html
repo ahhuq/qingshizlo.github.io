@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>步向紫溪山 - 诗意探索</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Serif SC', 'Source Han Serif SC', serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a3a, #0a1929);
+            color: #f5f5f5;
+            min-height: 100vh;
+            padding: 15px;
+            position: relative;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(41, 128, 185, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(46, 204, 113, 0.1) 0%, transparent 40%);
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+            position: relative;
+        }
+        
+        /* 右上角按钮样式 */
+        .secret-btn {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+            background: rgba(25, 35, 50, 0.9);
+            border: 1px solid rgba(100, 150, 200, 0.3);
+            color: #3498db;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .secret-btn:hover {
+            background: rgba(52, 152, 219, 0.2);
+            color: #2ecc71;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+        }
+        
+        /* 密码模态框样式 */
+        .password-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1a2a3a, #0a1929);
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            text-align: center;
+        }
+        
+        .modal-content h2 {
+            color: #3498db;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .password-input {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 15px 0;
+            background: rgba(30, 40, 55, 0.8);
+            border: 1px solid rgba(52, 152, 219, 0.5);
+            border-radius: 8px;
+            color: white;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        
+        .password-input:focus {
+            outline: none;
+            border-color: #2ecc71;
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+        
+        .error-msg {
+            color: #e74c3c;
+            height: 20px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        
+        /* 隐藏内容样式 */
+        .hidden-content {
+            display: none;
+            background: rgba(20, 30, 45, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            backdrop-filter: blur(5px);
+        }
+        
+        .hidden-content h2 {
+            text-align: center;
+            color: #2ecc71;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .hidden-content h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #2ecc71, transparent);
+        }
+        
+        .hidden-content h3 {
+            color: #3498db;
+            margin: 20px 0 15px;
+            font-size: 1.4rem;
+        }
+        
+        .hidden-content p {
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+        
+        .hidden-content .highlight {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        
+        .double-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: rgba(30, 40, 55, 0.7);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .double-table th {
+            background: rgba(52, 152, 219, 0.3);
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .double-table td {
+            padding: 12px;
+            border: 1px solid rgba(100, 150, 200, 0.2);
+        }
+        
+        .double-table tr:nth-child(even) {
+            background: rgba(40, 50, 65, 0.5);
+        }
+        
+        .double-table .surface {
+            color: #3498db;
+        }
+        
+        .double-table .hidden-layer {
+            color: #2ecc71;
+        }
+        
+        .quote {
+            font-style: italic;
+            padding: 15px;
+            margin: 20px 0;
+            border-left: 3px solid #2ecc71;
+            background: rgba(30, 40, 55, 0.5);
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .conclusion {
+            background: rgba(52, 152, 219, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 25px;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0 15px;
+            position: relative;
+        }
+        
+        .mountain-icon {
+            font-size: 2.5rem;
+            color: #3498db;
+            margin-bottom: 10px;
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            color: #bbb;
+            margin: 0 auto 20px;
+            padding: 0 15px;
+        }
+        
+        .poem-container {
+            background: rgba(25, 35, 50, 0.85);
+            border-radius: 12px;
+            padding: 25px 15px;
+            margin: 20px 0;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            border: 1px solid rgba(100, 150, 200, 0.2);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+        
+        .poem-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><path d="M0,0 Q40,15 80,0 T80,80 Q40,65 0,80 Z" fill="rgba(52, 152, 219, 0.1)"/></svg>');
+            opacity: 0.4;
+            z-index: -1;
+        }
+        
+        .poem-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #3498db;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .poem-title::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 20%;
+            width: 60%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #3498db, transparent);
+        }
+        
+        .poem-content {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 8px rgba(52, 152, 219, 0.4);
+            padding: 0 10px;
+        }
+        
+        .poem-line {
+            margin: 12px 0;
+            position: relative;
+            display: block;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 8px 0;
+        }
+        
+        .poem-line:hover, .poem-line.active {
+            color: #2ecc71;
+            transform: translateX(5px);
+        }
+        
+        .annotation {
+            display: none;
+            background: rgba(20, 30, 40, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 3px solid #3498db;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .annotation h3 {
+            color: #3498db;
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+        
+        .annotation p {
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .tab-btn {
+            flex: 1;
+            text-align: center;
+            padding: 12px 5px;
+            background: transparent;
+            border: none;
+            color: #aaa;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .tab-btn.active {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        
+        .tab-btn.active::after {
+            content: "";
+            position: absolute;
+            bottom: -1px;
+            left: 15%;
+            width: 70%;
+            height: 3px;
+            background: #2ecc71;
+            border-radius: 3px;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 15px;
+            background: rgba(30, 40, 55, 0.8);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .tab-content h3 {
+            color: #3498db;
+            margin-bottom: 12px;
+            font-size: 1.3rem;
+            border-bottom: 1px solid rgba(52, 152, 219, 0.3);
+            padding-bottom: 8px;
+        }
+        
+        .interactive-section {
+            background: rgba(35, 45, 60, 0.85);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .mountain-scene {
+            height: 180px;
+            background: linear-gradient(to bottom, #2c3e50, #1a2a38);
+            border-radius: 12px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mountain {
+            position: absolute;
+            bottom: 0;
+            width: 0;
+            height: 0;
+            border-left: 80px solid transparent;
+            border-right: 80px solid transparent;
+            border-bottom: 120px solid #34495e;
+            left: 20%;
+        }
+        
+        .mountain:nth-child(2) {
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom: 150px solid #2c3e50;
+            z-index: 2;
+        }
+        
+        .mountain:nth-child(3) {
+            left: 70%;
+            border-bottom: 100px solid #3a506b;
+        }
+        
+        .sun {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: #f39c12;
+            border-radius: 50%;
+            box-shadow: 0 0 30px #e67e22;
+        }
+        
+        .cloud {
+            position: absolute;
+            background: rgba(255,255,255,0.8);
+            border-radius: 50%;
+        }
+        
+        .cloud:nth-child(4) {
+            top: 40px;
+            left: 20px;
+            width: 40px;
+            height: 25px;
+        }
+        
+        .cloud:nth-child(5) {
+            top: 35px;
+            left: 45px;
+            width: 50px;
+            height: 30px;
+        }
+        
+        .cloud:nth-child(6) {
+            top: 45px;
+            left: 30px;
+            width: 45px;
+            height: 25px;
+        }
+        
+        .poet-card {
+            background: rgba(40, 50, 65, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .poet-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        /* 动画效果 */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 响应式调整 */
+        @media (min-width: 480px) {
+            .container {
+                max-width: 95%;
+            }
+            
+            .poem-content {
+                font-size: 1.6rem;
+            }
+            
+            .mountain-scene {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 右上角按钮 -->
+        <button class="secret-btn" onclick="showPasswordModal()">
+            <i class="fas fa-lock"></i> 查看隐藏含义
+        </button>
+        
+        <header>
+            <div class="mountain-icon">
+                <i class="fas fa-mountain"></i>
+            </div>
+            <h1>步向紫溪山</h1>
+            <p class="subtitle">探索山水之间的诗意与禅境，感受自然与心灵的对话</p>
+        </header>
+        
+        <div class="poem-container">
+            <h2 class="poem-title">步向紫溪山</h2>
+            <div class="poem-content">
+                <div class="poem-line" onclick="toggleAnnotation(1)">穴洞几何复几何，</div>
+                <div class="poem-line" onclick="toggleAnnotation(2)">笑傲此地任穿梭。</div>
+                <div class="poem-line" onclick="toggleAnnotation(3)">杀得山脚显形处，</div>
+                <div class="poem-line" onclick="toggleAnnotation(4)">必志上山见神国。</div>
+            </div>
+            
+            <div id="annotation-1" class="annotation">
+                <h3>注释</h3>
+                <p><strong>穴洞：</strong>指紫溪山中的岩洞和隧道</p>
+                <p><strong>几何复几何：</strong>形容山洞众多且形态各异</p>
+            </div>
+            
+            <div id="annotation-2" class="annotation">
+                <h3>注释</h3>
+                <p><strong>笑傲：</strong>形容自由自在、不受拘束的状态</p>
+                <p><strong>任穿梭：</strong>随意穿行，自由自在</p>
+            </div>
+            
+            <div id="annotation-3" class="annotation">
+                <h3>注释</h3>
+                <p><strong>杀得：</strong>古语，意为"到达"、"抵达"</p>
+                <p><strong>显形处：</strong>指山脚开阔地带</p>
+            </div>
+            
+            <div id="annotation-4" class="annotation">
+                <h3>注释</h3>
+                <p><strong>必志：</strong>坚定志向，下定决心</p>
+                <p><strong>神国：</strong>比喻山顶神圣美丽的境界</p>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab('translation')">诗歌翻译</button>
+            <button class="tab-btn" onclick="openTab('appreciation')">诗歌赏析</button>
+            <button class="tab-btn" onclick="openTab('background')">创作背景</button>
+        </div>
+        
+        <div id="translation" class="tab-content active">
+            <h3>现代汉语翻译</h3>
+            <p>紫溪山的洞穴层层叠叠数不胜数，</p>
+            <p>我在此间自由穿梭豪情满怀。</p>
+            <p>行至山脚平坦开阔之地，</p>
+            <p>定要登上山顶一睹那神仙境界。</p>
+            
+            <h3>英文翻译</h3>
+            <p>Countless caves upon caves in Violet Creek Hill,</p>
+            <p>I roam freely here with unrestrained will.</p>
+            <p>Reaching the mountain's foot where plains extend,</p>
+            <p>I resolve to climb and see the divine land.</p>
+        </div>
+        
+        <div id="appreciation" class="tab-content">
+            <h3>诗歌赏析</h3>
+            <p>这首诗以登山为喻，展现了诗人追求理想境界的精神旅程：</p>
+            
+            <p><strong>首句"穴洞几何复几何"</strong>，以重复的"几何"强调山洞的曲折复杂，象征人生道路的崎岖多变。</p>
+            
+            <p><strong>第二句"笑傲此地任穿梭"</strong>，表现了诗人面对困难时的豁达态度和自由精神。"笑傲"二字尽显豪迈气概。</p>
+            
+            <p><strong>第三句"杀得山脚显形处"</strong>，转折处描写到达山脚开阔地带，象征人生阶段性成就。</p>
+            
+            <p><strong>末句"必志上山见神国"</strong>，展现诗人不满足于现状，继续攀登追求更高境界的决心。</p>
+            
+            <p>全诗以登山喻人生，表达了不畏艰难、勇攀高峰的精神追求，体现了中国传统文化中"天人合一"的哲学思想。</p>
+        </div>
+        
+        <div id="background" class="tab-content">
+            <h3>创作背景</h3>
+            <p>此诗创作于明代中期，作者张岱(1597-1689)游历云南楚雄紫溪山时有感而作。</p>
+            
+            <p>紫溪山位于楚雄市西南，海拔2500米，以奇峰、异石、古树、清泉著称，有"滇中翡翠"之美誉。山中洞穴众多，形成独特的地貌景观。</p>
+            
+            <p>诗人当时因仕途受挫，游历山水以抒怀。在紫溪山三日游历中，被山中洞穴奇观所震撼，更被登山过程中"步步皆景、移步换景"的体验所触动，遂作此诗。</p>
+            
+            <p>诗中"神国"既指紫溪山顶的绝美风光，也暗喻诗人向往的精神家园和理想境界。</p>
+        </div>
+        
+        <!-- 隐藏内容区域 -->
+        <div id="hiddenMeaning" class="hidden-content">
+            <h2>解密全诗双关结构</h2>
+            
+            <h3>1. 题目谐音：</h3>
+            <p><span class="highlight">《步向紫溪山》</span> → <span class="highlight">"不想自习"</span>（步向=不想，紫溪=自习，山=语气强化）</p>
+            <p>开篇即定调，用山水诗伪装逃课宣言。</p>
+            
+            <h3>2. 藏头密码：</h3>
+            <p>每句首字连读为 <span class="highlight">"穴笑杀必"</span> → 谐音 <span class="highlight">"学校傻哔"</span>（方言中"穴"通"学"，"必"通"哔"）</p>
+            <p>粗鄙之语被文雅诗句包裹，形成尖锐反差。</p>
+            
+            <h3>双重意象解码表</h3>
+            <table class="double-table">
+                <tr>
+                    <th>表层（登山）</th>
+                    <th>里层（厌学）</th>
+                    <th>讽刺手法</th>
+                </tr>
+                <tr>
+                    <td class="surface">穴洞几何复几何</td>
+                    <td class="hidden-layer">教室如洞穴般压抑重复</td>
+                    <td>数学术语"几何"双关课业重压</td>
+                </tr>
+                <tr>
+                    <td class="surface">笑傲此地任穿梭</td>
+                    <td class="hidden-layer">幻想逃离教室自由游荡</td>
+                    <td>"笑傲"反衬现实无力感</td>
+                </tr>
+                <tr>
+                    <td class="surface">杀得山脚显形处</td>
+                    <td class="hidden-layer">痛恨校服（山脚=校服？）</td>
+                    <td>"杀得"宣泄暴力情绪</td>
+                </tr>
+                <tr>
+                    <td class="surface">必志上山见神国</td>
+                    <td class="hidden-layer">渴望校外世界如"神国"</td>
+                    <td>神圣词汇讽刺学校如牢笼</td>
+                </tr>
+            </table>
+            
+            <h3>艺术价值再发现</h3>
+            <p><strong>解构式幽默：</strong><br>
+            用古典山水诗的庄重形式包装脏话，类似"互联网抽象话"的前卫实验。当读者发现"学校傻哔"的藏头时，严肃文学与市井骂战碰撞出荒诞喜剧效果。</p>
+            
+            <p><strong>群体情绪载体：</strong><br>
+            "自习"作为学生共同创伤记忆，"穴洞几何"精准传递刷题机械感，"神国"暗指高考后的乌托邦幻想，引发广泛共鸣。</p>
+            
+            <p><strong>防御性创作策略：</strong><br>
+            粗话经诗词加密后，既可规避审查（如交作业时伪装成山水诗），又因解码难度形成圈层认同——看懂藏头者会心一笑，师长可能误赞"有豪迈诗情"。</p>
+            
+            <div class="quote">
+                "此诗如同用文言文制作的炸弹：导火索是'不想自习'的谐音标题，火药是'学校傻哔'的藏头脏话，弹壳却是优美的山水意象。"
+            </div>
+            
+            <h3>文化基因溯源</h3>
+            <ul>
+                <li><strong>谐音传统：</strong>承袭民间"谐音吉利话"（如年画"蝠"通"福"），但反向用作批判武器。</li>
+                <li><strong>藏头源流：</strong>效法《水浒传》反诗"卢俊义反"（"芦花丛中一扁舟"藏头），以雅言载离经叛道之志。</li>
+                <li><strong>丧文化变体：</strong>用"不想自习"的直白，解构"劝学"主流话语，与"佛系""躺平"同属当代青年抵抗叙事。</li>
+            </ul>
+            
+            <div class="conclusion">
+                <h3>总结：一场精致的文字叛乱</h3>
+                <p>此诗如同用文言文制作的炸弹：导火索是"不想自习"的谐音标题，火药是"学校傻哔"的藏头脏话，弹壳却是优美的山水意象。当读者拆解出真相时，雅俗碰撞的爆破力瞬间撕裂教育异化的假面——堪称属于Z世代的《己亥杂诗》。</p>
+            </div>
+        </div>
+        
+        <div class="mountain-scene">
+            <div class="mountain"></div>
+            <div class="mountain"></div>
+            <div class="mountain"></div>
+            <div class="sun"></div>
+            <div class="cloud"></div>
+            <div class="cloud"></div>
+            <div class="cloud"></div>
+        </div>
+        
+        <div class="interactive-section">
+            <h3>诗意互动</h3>
+            <p>选择您喜欢的阅读体验：</p>
+            <button class="btn" onclick="changeTheme('classic')"><i class="fas fa-book"></i> 古典模式</button>
+            <button class="btn" onclick="changeTheme('nature')"><i class="fas fa-leaf"></i> 自然模式</button>
+            <button class="btn" onclick="changeTheme('night')"><i class="fas fa-moon"></i> 夜间模式</button>
+            
+            <div style="margin-top: 20px;">
+                <button class="btn" onclick="playAudio()"><i class="fas fa-volume-up"></i> 聆听朗诵</button>
+            </div>
+        </div>
+        
+        <div class="poet-card">
+            <div class="poet-img">
+                <i class="fas fa-user"></i>
+            </div>
+            <h3>诗人简介</h3>
+            <p><strong>张岱</strong> (1597-1689)</p>
+            <p>明末清初文学家、史学家，字宗子，号陶庵。出身仕宦世家，少为富贵公子，精于茶艺鉴赏，爱繁华，好山水。明亡后不仕，入山著书以终。</p>
+            <p>代表作品：《陶庵梦忆》、《西湖梦寻》</p>
+        </div>
+        
+        <footer>
+            <p>© 2023 紫溪山诗意探索 | 传统诗词数字传承计划</p>
+            <p>网页设计融合古典美学与现代交互体验</p>
+        </footer>
+    </div>
+    
+    <!-- 密码模态框 -->
+    <div id="passwordModal" class="password-modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-lock"></i> 解密全诗双关结构</h2>
+            <p>请输入密码查看隐藏含义</p>
+            <input type="password" id="passwordInput" class="password-input" placeholder="请输入密码...">
+            <p id="errorMsg" class="error-msg"></p>
+            <button class="submit-btn" onclick="checkPassword()">确认</button>
+        </div>
+    </div>
+    
+    <script>
+        // 切换注释显示
+        function toggleAnnotation(lineNum) {
+            const annotation = document.getElementById(`annotation-${lineNum}`);
+            const line = document.querySelectorAll('.poem-line')[lineNum-1];
+            
+            // 隐藏所有注释
+            document.querySelectorAll('.annotation').forEach(ann => {
+                ann.style.display = 'none';
+            });
+            
+            // 移除所有行激活状态
+            document.querySelectorAll('.poem-line').forEach(l => {
+                l.classList.remove('active');
+            });
+            
+            // 显示当前注释
+            if (annotation.style.display === 'block') {
+                annotation.style.display = 'none';
+                line.classList.remove('active');
+            } else {
+                annotation.style.display = 'block';
+                line.classList.add('active');
+            }
+        }
+        
+        // 切换标签页
+        function openTab(tabName) {
+            // 隐藏所有标签内容
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 移除所有按钮激活状态
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 显示当前标签内容
+            document.getElementById(tabName).classList.add('active');
+            
+            // 激活当前按钮
+            event.currentTarget.classList.add('active');
+        }
+        
+        // 更换主题
+        function changeTheme(theme) {
+            const body = document.body;
+            
+            // 移除现有主题类
+            body.classList.remove('classic-theme', 'nature-theme', 'night-theme');
+            
+            // 应用新主题
+            switch(theme) {
+                case 'classic':
+                    body.classList.add('classic-theme');
+                    body.style.background = 'linear-gradient(135deg, #8e7c68, #5d4c3d)';
+                    break;
+                case 'nature':
+                    body.classList.add('nature-theme');
+                    body.style.background = 'linear-gradient(135deg, #2c5e1a, #1a3c29)';
+                    break;
+                case 'night':
+                    body.classList.add('night-theme');
+                    body.style.background = 'linear-gradient(135deg, #0a1a2a, #000814)';
+                    break;
+                default:
+                    body.style.background = 'linear-gradient(135deg, #1a2a3a, #0a1929)';
+            }
+        }
+        
+        // 播放朗诵音频
+        function playAudio() {
+            alert("朗诵音频开始播放... 请想象深沉的男声朗诵着诗句");
+            // 在实际应用中这里会嵌入音频播放器
+        }
+        
+        // 显示密码模态框
+        function showPasswordModal() {
+            document.getElementById('passwordModal').style.display = 'block';
+            document.getElementById('passwordInput').focus();
+        }
+        
+        // 关闭密码模态框
+        function closePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('errorMsg').textContent = '';
+            document.getElementById('passwordInput').value = '';
+        }
+        
+        // 检查密码
+        function checkPassword() {
+            const passwordInput = document.getElementById('passwordInput').value;
+            const errorMsg = document.getElementById('errorMsg');
+            
+            // 密码加密验证（实际密码：hhjzs）
+            const encrypted = btoa(String.fromCharCode(...[104, 104, 106, 122, 115]));
+            const inputEncrypted = btoa(passwordInput);
+            
+            if (inputEncrypted === encrypted) {
+                // 密码正确
+                closePasswordModal();
+                document.getElementById('hiddenMeaning').style.display = 'block';
+                
+                // 滚动到隐藏内容
+                document.getElementById('hiddenMeaning').scrollIntoView({ 
+                    behavior: 'smooth' 
+                });
+            } else {
+                // 密码错误
+                errorMsg.textContent = '密码错误，请重新输入';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+                
+                // 添加错误动画
+                const input = document.getElementById('passwordInput');
+                input.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    input.style.animation = '';
+                }, 500);
+            }
+        }
+        
+        // 添加抖动动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% {transform: translateX(0);}
+                20%, 60% {transform: translateX(-5px);}
+                40%, 80% {transform: translateX(5px);}
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // 点击模态框外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('passwordModal');
+            if (event.target === modal) {
+                closePasswordModal();
+            }
+        }
+        
+        // 按回车键提交
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+    </script>
+</body>
+</html>
