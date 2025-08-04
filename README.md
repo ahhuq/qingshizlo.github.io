@@ -1,1 +1,1 @@
-# qingshizlo.github.io
+# qingshizlo.com
